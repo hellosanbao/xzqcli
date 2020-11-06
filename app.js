@@ -49,18 +49,19 @@ class BeantechCli {
       let indexPath = path.join(file_path,'index.js')
       let existsIndex = fs.existsSync(indexPath)
       if(!existsIndex){
-        fs.writeFileSync(indexPath,this.getIndexString(fileArr),'utf-8')
+        fs.writeFileSync(indexPath,this.getIndexString(fileArr,file_path),'utf-8')
       }
     } else {
       console.log(`${file_path}目录不存在`)
     }
   }
   //获取index文件内容
-  getIndexString(fileArr){
+  getIndexString(fileArr,baseDir){
     let str = ''
     fileArr.forEach(file=>{
-      let filePa = file.replace(this.root,'').split('/').slice(1).join('/')
-      str += `export * from './${filePa}'; \n`
+      let filePa = file.replace(path.join(baseDir),'')
+      filePa = filePa.startsWith('/')?filePa:`/${filePa}`
+      str += `export * from '.${filePa}'; \n`
     })
     return str
   }
